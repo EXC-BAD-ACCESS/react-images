@@ -249,6 +249,7 @@ class Lightbox extends Component {
 			currentImage,
 			images,
 			onClickImage,
+			customImage,
 			showThumbnails,
 		} = this.props;
 
@@ -263,6 +264,8 @@ class Lightbox extends Component {
 		const thumbnailsSize = showThumbnails ? this.theme.thumbnail.size : 0;
 		const heightOffset = `${this.theme.header.height + this.theme.footer.height + thumbnailsSize
 			+ (this.theme.container.gutter.vertical)}px`;
+
+		console.log(customImage, customImage() || 12);
 
 		return (
 			<figure className={css(this.classes.figure)}>
@@ -385,6 +388,7 @@ Lightbox.propTypes = {
 	onClickImage: PropTypes.func,
 	onClickNext: PropTypes.func,
 	onClickPrev: PropTypes.func,
+	customImage: PropTypes.func,
 	onClose: PropTypes.func.isRequired,
 	preloadNextImage: PropTypes.bool,
 	preventScroll: PropTypes.bool,
