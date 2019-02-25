@@ -1266,6 +1266,7 @@ var Lightbox = function (_Component) {
 			    currentImage = _props3.currentImage,
 			    images = _props3.images,
 			    onClickImage = _props3.onClickImage,
+			    customImage = _props3.customImage,
 			    showThumbnails = _props3.showThumbnails;
 			var imageLoaded = this.state.imageLoaded;
 
@@ -1277,13 +1278,20 @@ var Lightbox = function (_Component) {
 			var sizes = sourceSet ? '100vw' : null;
 
 			var thumbnailsSize = showThumbnails ? this.theme.thumbnail.size : 0;
-			var heightOffset = this.theme.header.height + this.theme.footer.height + thumbnailsSize + this.theme.container.gutter.vertical + 'px';
+			// Height offset is header height + footer height + thumbnails size + 1x vertical gutter size
+			// Only 1x gutter vertical height because there is negative margin in the div for some reason that reduces the amount of padding
+			var heightOffset = this.theme.header.height + this.theme.footer.height + thumbnailsSize + this.theme.container.gutter.vertical;
+			// Total width offset is 2x the horizontal gutter (left & right side)
+			var widthOffset = this.theme.container.gutter.horizontal * 2;
 
-			return React.createElement(
+			var figureClassName = css(this.classes.figure);
+			var imgClassName = css(this.classes.image, imageLoaded && this.classes.imageLoaded);
+
+			return customImage(image, imageLoaded, figureClassName, imgClassName, onClickImage, widthOffset, heightOffset) || React.createElement(
 				'figure',
-				{ className: css(this.classes.figure) },
+				{ className: figureClassName },
 				React.createElement('img', {
-					className: css(this.classes.image, imageLoaded && this.classes.imageLoaded),
+					className: imgClassName,
 					onClick: onClickImage,
 					sizes: sizes,
 					alt: image.alt,
@@ -1291,7 +1299,7 @@ var Lightbox = function (_Component) {
 					srcSet: sourceSet,
 					style: {
 						cursor: onClickImage ? 'pointer' : 'auto',
-						maxHeight: 'calc(100vh - ' + heightOffset + ')'
+						maxHeight: 'calc(100vh - ' + heightOffset + 'px)'
 					}
 				})
 			);
@@ -1404,6 +1412,7 @@ Lightbox.propTypes = {
 	onClickImage: PropTypes.func,
 	onClickNext: PropTypes.func,
 	onClickPrev: PropTypes.func,
+	customImage: PropTypes.func,
 	onClose: PropTypes.func.isRequired,
 	preloadNextImage: PropTypes.bool,
 	preventScroll: PropTypes.bool,
@@ -1424,6 +1433,7 @@ Lightbox.defaultProps = {
 	enableKeyboardInput: true,
 	imageCountSeparator: ' of ',
 	leftArrowTitle: 'Previous (Left arrow key)',
+	customImage: function customImage() {},
 	onClickShowNextImage: true,
 	preloadNextImage: true,
 	preventScroll: true,
