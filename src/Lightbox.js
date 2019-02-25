@@ -113,7 +113,14 @@ class Lightbox extends Component {
 	}
 	preloadImageData (data, onload) {
 		if (!data) return;
-		const img = new Image();
+
+		// If a custom preload image handler is given, call that first
+		let img = this.props.customPreloadImage(data, onload);
+		if (img)
+			return img;
+
+		// Otherwise, preload the image as normal
+		img = new Image();
 		const sourceSet = normalizeSourceSet(data);
 
 		// TODO: add error handling for missing images
@@ -393,6 +400,7 @@ Lightbox.propTypes = {
 	onClickNext: PropTypes.func,
 	onClickPrev: PropTypes.func,
 	customImage: PropTypes.func,
+	customPreloadImage: PropTypes.func,
 	onClose: PropTypes.func.isRequired,
 	preloadNextImage: PropTypes.bool,
 	preventScroll: PropTypes.bool,
@@ -414,6 +422,7 @@ Lightbox.defaultProps = {
 	imageCountSeparator: ' of ',
 	leftArrowTitle: 'Previous (Left arrow key)',
 	customImage: () => {},
+	customPreloadImage: () => {},
 	onClickShowNextImage: true,
 	preloadNextImage: true,
 	preventScroll: true,
