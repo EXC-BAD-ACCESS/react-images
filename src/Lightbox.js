@@ -262,20 +262,24 @@ class Lightbox extends Component {
 		const sizes = sourceSet ? '100vw' : null;
 
 		const thumbnailsSize = showThumbnails ? this.theme.thumbnail.size : 0;
-		const heightOffset = `${this.theme.header.height + this.theme.footer.height + thumbnailsSize
-			+ (this.theme.container.gutter.vertical)}px`;
+		// Height offset is header height + footer height + thumbnails size + 1x vertical gutter size
+		// Only 1x gutter vertical height because there is negative margin in the div for some reason that reduces the amount of padding
+		const heightOffset = this.theme.header.height + this.theme.footer.height + thumbnailsSize + this.theme.container.gutter.vertical;
+		// Total width offset is 2x the horizontal gutter (left & right side)
+		const widthOffset = this.theme.container.gutter.horizontal * 2;
 
-		console.log(customImage, customImage() || 12);
+		const figureClassName = css(this.classes.figure);
+		const imgClassName = css(this.classes.image, imageLoaded && this.classes.imageLoaded);
 
-		return (
-			<figure className={css(this.classes.figure)}>
+		return customImage(image, imageLoaded, figureClassName, imgClassName, onClickImage, widthOffset, heightOffset) || (
+			<figure className={figureClassName}>
 				{/*
 					Re-implement when react warning "unknown props"
 					https://fb.me/react-unknown-prop is resolved
 					<Swipeable onSwipedLeft={this.gotoNext} onSwipedRight={this.gotoPrev} />
 				*/}
 				<img
-					className={css(this.classes.image, imageLoaded && this.classes.imageLoaded)}
+					className={imgClassName}
 					onClick={onClickImage}
 					sizes={sizes}
 					alt={image.alt}
@@ -283,7 +287,7 @@ class Lightbox extends Component {
 					srcSet={sourceSet}
 					style={{
 						cursor: onClickImage ? 'pointer' : 'auto',
-						maxHeight: `calc(100vh - ${heightOffset})`,
+						maxHeight: `calc(100vh - ${heightOffset}px)`,
 					}}
 				/>
 			</figure>
@@ -409,6 +413,7 @@ Lightbox.defaultProps = {
 	enableKeyboardInput: true,
 	imageCountSeparator: ' of ',
 	leftArrowTitle: 'Previous (Left arrow key)',
+	customImage: () => {},
 	onClickShowNextImage: true,
 	preloadNextImage: true,
 	preventScroll: true,
