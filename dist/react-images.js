@@ -1110,8 +1110,15 @@ var Lightbox = function (_Component) {
 		value: function preloadImageData(data, onload) {
 			if (!data) return;
 
+			var thumbnailsSize = this.props.showThumbnails ? this.theme.thumbnail.size : 0;
+			// Height offset is header height + footer height + thumbnails size + 1x vertical gutter size
+			// Only 1x gutter vertical height because there is negative margin in the div for some reason that reduces the amount of padding
+			var heightOffset = this.theme.header.height + this.theme.footer.height + thumbnailsSize + this.theme.container.gutter.vertical;
+			// Total width offset is 2x the horizontal gutter (left & right side)
+			var widthOffset = this.theme.container.gutter.horizontal * 2;
+
 			// If a custom preload image handler is given, call that first
-			var img = this.props.customPreloadImage(data, onload);
+			var img = this.props.customPreloadImage(data, onload, widthOffset, heightOffset);
 			if (img) return img;
 
 			// Otherwise, preload the image as normal
