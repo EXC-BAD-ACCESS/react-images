@@ -170,6 +170,7 @@ class Lightbox extends Component {
 		// and if the caption is widening the figure element let that respond too
 		if (event.target.id === 'lightboxBackdrop' || event.target.tagName === 'FIGURE') {
 			this.props.onClose();
+			event.preventDefault();
 		}
 	}
 	handleKeyboardInput (event) {
